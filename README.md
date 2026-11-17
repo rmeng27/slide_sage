@@ -11,6 +11,10 @@
   <img src="https://img.shields.io/badge/RAG-Grounded%20Generation-6C63FF" alt="RAG">
 </p>
 
+<p align="center">
+  <img src="docs/rag_pipeline.svg" alt="SlideSage RAG pipeline" width="900">
+</p>
+
 ## Overview
 
 **SlideSage** helps students turn lecture slides and course notes into source-grounded study material.
