@@ -1,63 +1,101 @@
-# SlideSage: RAG-Based Conceptual Question Generator
+# SlideSage
 
-SlideSage is a small Retrieval-Augmented Generation (RAG) app for generating conceptual practice questions from lecture slides or course notes.
+<p align="center">
+  <strong>A document-grounded RAG application that turns lecture materials into conceptual practice questions with answers, explanations, citations, and optional grounding evaluation.</strong>
+</p>
 
-The system takes uploaded course materials, chunks them, embeds the chunks, retrieves the chunks most relevant to a topic query, and asks an LLM to generate questions, answers, explanations, difficulty levels, topic tags, and source chunk IDs.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/FAISS-Vector%20Search-4B8BBE" alt="FAISS">
+  <img src="https://img.shields.io/badge/RAG-Grounded%20Generation-6C63FF" alt="RAG">
+</p>
 
-## What this project demonstrates
+## Overview
 
-This project is designed as a GenAI course value-add. It demonstrates:
+**SlideSage** helps students turn lecture slides and course notes into source-grounded study material.
 
-- document parsing
-- chunking
-- embedding-based retrieval
-- FAISS vector search
-- retrieval-augmented generation
-- source-grounded question generation
-- optional LLM-as-judge grounding evaluation
-- a runnable Streamlit interface
+The application parses uploaded documents, splits them into retrievable chunks, creates local embeddings, retrieves the chunks most relevant to a topic, and asks Anthropic Claude to generate conceptual questions using only that retrieved context.
 
-## Folder structure
+Each generated item can include an answer, explanation, difficulty label, concept tags, and source chunk IDs. An optional evaluator checks whether generated questions are supported by the retrieved evidence.
+
+## How It Works
 
 ```text
-slidesage_skill/
-├── app.py                  # Streamlit app
-├── rag_core.py             # RAG pipeline functions
-├── requirements.txt        # Python dependencies
-├── .env.example            # API key template
-├── .gitignore
-├── skill.md                # Project/skill specification
-├── data/                   # Optional local slide files
-├── outputs/                # Optional generated outputs
-└── sample_outputs/         # Example outputs for GitHub/demo
+Uploaded documents
+  → text extraction
+  → chunking
+  → Sentence Transformer embeddings
+  → FAISS vector index
+  → top-k semantic retrieval
+  → Claude question generation
+  → source-linked output
+  → optional grounding evaluation
 ```
 
-## Supported input files
+## Supported Inputs
 
-- `.html`
-- `.pdf`
-- `.pptx`
-- `.txt`
-- `.md`
+- HTML lecture slides
+- PDF files
+- PowerPoint presentations
+- Markdown notes
+- plain-text notes
 
-HTML lecture slides usually work best because slide boundaries are easier to preserve.
+## Key Features
 
-## Setup
+### Multi-format document ingestion
+SlideSage extracts content from HTML, PDF, PPTX, Markdown, and text files.
+
+### Semantic retrieval
+Document chunks are embedded with `sentence-transformers/all-MiniLM-L6-v2` and indexed in FAISS for top-k retrieval.
+
+### Grounded question generation
+Only retrieved source context is passed into the generation prompt, reducing reliance on unsupported model memory.
+
+### Source traceability
+Generated questions include source chunk IDs so users can trace the output back to retrieved material.
+
+### Optional grounding evaluation
+An LLM-as-judge step can evaluate whether generated study questions are supported by the retrieved evidence.
+
+### Structured export
+The full result package—including retrieved chunks, generated questions, and optional evaluation—is downloadable as JSON.
+
+## Tech Stack
+
+| Layer | Tools |
+|---|---|
+| Application | Python, Streamlit |
+| Document parsing | BeautifulSoup, pypdf, python-pptx |
+| Embeddings | Sentence Transformers |
+| Vector search | FAISS |
+| Generation | Anthropic Claude API |
+| Data handling | pandas, NumPy |
+
+## Repository Structure
+
+```text
+slide_sage/
+├── app.py
+├── rag_core.py
+├── requirements.txt
+├── README.md
+├── .env.example
+├── .gitignore
+├── data/
+│   └── README.md
+└── docs/
+    └── project_spec.md
+```
+
+## Run Locally
 
 ### 1. Create a virtual environment
 
-Mac/Linux:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-Windows:
-
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate
+# Windows: .venv\Scripts\activate
 ```
 
 ### 2. Install dependencies
@@ -66,9 +104,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 3. Add your Anthropic API key
-
-Copy `.env.example` to `.env`:
+### 3. Configure the Anthropic API key
 
 ```bash
 cp .env.example .env
@@ -77,111 +113,43 @@ cp .env.example .env
 Then edit `.env`:
 
 ```text
-Anthropic_API_KEY=your_actual_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```
 
-Do not upload `.env` to GitHub.
+The real `.env` file is excluded from version control.
 
-## Run the app
+### 4. Launch
 
 ```bash
 streamlit run app.py
 ```
 
-Then open the local URL shown by Streamlit, usually:
+## Example Workflow
 
-```text
-http://localhost:8501
-```
+1. Upload one or more lecture files.
+2. Enter a topic query.
+3. Choose chunk size and retrieval depth.
+4. Inspect the retrieved source chunks and similarity scores.
+5. Generate conceptual questions.
+6. Optionally run grounding evaluation.
+7. Download the full output as JSON.
 
-## How to use
+## Evaluation Notes
 
-1. Upload lecture slides or notes.
-2. Enter a topic query, such as:
-   - `RAG evaluation, faithfulness, citation precision, and citation recall`
-   - `agents, tools, skills, and planning loops`
-   - `multimodal embeddings, CLIP, and contrastive learning`
-   - `fine-tuning for classification and embedding models`
-3. Choose the number of retrieved chunks.
-4. Choose the number of generated questions.
-5. Click **Generate conceptual questions**.
-6. Review retrieved chunks and generated questions.
-7. Download the full JSON output.
+The optional evaluator checks generated questions against the retrieved source context and returns structured grounding judgments. This is a lightweight reliability check rather than a substitute for human review.
 
-## Where RAG happens
+## Limitations
 
-The RAG pipeline is implemented in `rag_core.py`.
+- Retrieval quality depends on document extraction and chunking quality.
+- Image-heavy slides may lose information during text-only extraction.
+- RAG reduces unsupported generation risk but does not eliminate it.
+- LLM-based evaluation is itself model-dependent.
+- The app requires an Anthropic API key for generation and evaluation.
 
-```text
-uploaded files
-→ load_file()
-→ chunk_documents()
-→ build_faiss_index()
-→ retrieve()
-→ format_context()
-→ generate_questions()
-```
+## Additional Documentation
 
-The most important RAG functions are:
+The original design specification is preserved in [`docs/project_spec.md`](docs/project_spec.md).
 
-- `build_faiss_index()` embeds lecture chunks and stores them in a FAISS vector index.
-- `retrieve()` embeds the user's topic query and retrieves the most relevant chunks.
-- `format_context()` formats the retrieved chunks as source-labeled context.
-- `generate_questions()` sends only the retrieved context to the LLM.
+---
 
-This means the LLM does not generate questions from the full slide deck or from general memory alone. It generates questions based on retrieved course-specific context.
-
-## Token/cost notes
-
-The local embedding model does not use Anthropic tokens:
-
-```text
-sentence-transformers/all-MiniLM-L6-v2
-```
-
-Anthropic tokens are used when:
-
-- generating questions
-- running optional grounding evaluation
-
-To reduce token usage:
-
-- lower `Retrieved chunks`
-- lower `Chunk size`
-- generate fewer questions
-- turn off optional grounding evaluation
-
-## Optional evaluation
-
-The app includes an optional grounding evaluation mode. This sends the retrieved context and generated questions to the LLM and asks it to judge whether each question is supported by the retrieved source chunks.
-
-This is useful for reporting whether the RAG system is producing grounded outputs instead of unsupported questions.
-
-## Suggested demo script
-
-1. Upload several GenAI lecture slides.
-2. Search for `RAG evaluation and faithfulness`.
-3. Show the retrieved chunks table.
-4. Generate 8 questions.
-5. Open one generated question and point to its source chunk IDs.
-6. Turn on optional grounding evaluation and compare results.
-7. Download the JSON output.
-
-## GitHub submission notes
-
-Recommended files to upload:
-
-- `app.py`
-- `rag_core.py`
-- `requirements.txt`
-- `README.md`
-- `skill.md`
-- `.env.example`
-- `.gitignore`
-- `sample_outputs/README.md`
-
-Do not upload:
-
-- `.env`
-- private API keys
-- copyrighted lecture slides unless your instructor allows it
+<sub>Originally developed as a graduate Generative AI project and refined for portfolio presentation.</sub>
