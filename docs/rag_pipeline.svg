@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="360" viewBox="0 0 1100 360">
+<rect width="1100" height="360" rx="28" fill="#f7f9fc"/>
+<text x="55" y="58" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#172033">SlideSage RAG pipeline</text>
+<text x="55" y="92" font-family="Arial,sans-serif" font-size="17" fill="#667085">From uploaded lecture material to source-grounded conceptual questions</text>
+<g font-family="Arial,sans-serif">
+<rect x="50" y="145" width="135" height="78" rx="16" fill="#fff" stroke="#d9e0eb"/><text x="117" y="178" text-anchor="middle" font-size="17" font-weight="700" fill="#25324a">Documents</text><text x="117" y="201" text-anchor="middle" font-size="13" fill="#667085">PDF · PPTX · HTML</text>
+<text x="200" y="190" font-size="28" fill="#9aa4b2">→</text>
+<rect x="235" y="145" width="135" height="78" rx="16" fill="#fff" stroke="#d9e0eb"/><text x="302" y="178" text-anchor="middle" font-size="17" font-weight="700" fill="#25324a">Chunk</text><text x="302" y="201" text-anchor="middle" font-size="13" fill="#667085">parse + split</text>
+<text x="385" y="190" font-size="28" fill="#9aa4b2">→</text>
+<rect x="420" y="145" width="135" height="78" rx="16" fill="#fff" stroke="#d9e0eb"/><text x="487" y="178" text-anchor="middle" font-size="17" font-weight="700" fill="#25324a">Embed</text><text x="487" y="201" text-anchor="middle" font-size="13" fill="#667085">MiniLM</text>
+<text x="570" y="190" font-size="28" fill="#9aa4b2">→</text>
+<rect x="605" y="145" width="135" height="78" rx="16" fill="#fff" stroke="#d9e0eb"/><text x="672" y="178" text-anchor="middle" font-size="17" font-weight="700" fill="#25324a">Retrieve</text><text x="672" y="201" text-anchor="middle" font-size="13" fill="#667085">FAISS top-k</text>
+<text x="755" y="190" font-size="28" fill="#9aa4b2">→</text>
+<rect x="790" y="145" width="125" height="78" rx="16" fill="#fff" stroke="#d9e0eb"/><text x="852" y="178" text-anchor="middle" font-size="17" font-weight="700" fill="#25324a">Generate</text><text x="852" y="201" text-anchor="middle" font-size="13" fill="#667085">Claude</text>
+<text x="930" y="190" font-size="28" fill="#9aa4b2">→</text>
+<rect x="965" y="145" width="90" height="78" rx="16" fill="#ebe9ff" stroke="#c7c2ff"/><text x="1010" y="178" text-anchor="middle" font-size="16" font-weight="700" fill="#5148b8">Evaluate</text><text x="1010" y="201" text-anchor="middle" font-size="12" fill="#667085">grounding</text>
+</g>
+<text x="55" y="292" font-family="Arial,sans-serif" font-size="16" fill="#667085">Output: questions · answers · explanations · difficulty · concept tags · source chunk IDs</text>
+</svg>
